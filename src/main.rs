@@ -1,10 +1,9 @@
-mod utils;
 mod widgets;
 
-use druid::widget::WidgetExt;
+use druid::widget::{Flex, Label, WidgetExt, Align};
 use druid::{AppLauncher, Data, Lens, Widget, WindowDesc};
 
-use widgets::Calendar;
+use widgets::Grid;
 
 #[derive(Clone, Default, Data, Lens)]
 struct AppState {
@@ -13,12 +12,20 @@ struct AppState {
 }
 
 fn ui_builder() -> impl Widget<AppState> {
-    Calendar::new(3).lens(AppState::selected_month)
+    Flex::column()
+        .with_child(Label::new("<     Marzo 2020     >").center(), 1.)
+        .with_child(Grid::new(1).center(), 6.)
 }
 
 fn main() {
-    let main_window = WindowDesc::new(ui_builder);
-    let data = AppState::default();
+    let main_window = WindowDesc::new(ui_builder)
+        .window_size((750., 750.))
+        .resizable(false);
+    let data = AppState {
+        selected_month: 1,
+        selected_day: 1,
+    };
+
     AppLauncher::with_window(main_window)
         .use_simple_logger()
         .launch(data)
