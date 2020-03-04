@@ -18,13 +18,11 @@ const SIZE: f64 = 100.;
 pub struct Grid {
     label: Option<PietTextLayout>,
     font_size: f64,
-    month: u8,
 }
 
 impl Grid {
-    pub fn new(month: u8) -> Self {
+    pub fn new() -> Self {
         Grid {
-            month,
             label: None,
             font_size: SIZE / 7.,
         }
