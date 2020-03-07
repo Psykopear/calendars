@@ -1,6 +1,6 @@
 mod widgets;
 
-use druid::widget::{Button, Flex, Label, WidgetExt};
+use druid::widget::{Button, Flex, WidgetExt};
 use druid::{theme,Color, AppLauncher, Data, Env, EventCtx, Lens, Widget, WindowDesc};
 use std::sync::Arc;
 
@@ -15,7 +15,7 @@ struct AppState {
 
 fn month_days(year: i32, month: u32) -> u32 {
     NaiveDate::from_ymd_opt(year, month + 1, 1)
-        .unwrap_or(NaiveDate::from_ymd(year + 1, 1, 1))
+        .unwrap_or_else(|| NaiveDate::from_ymd(year + 1, 1, 1))
         .pred()
         .day()
 }

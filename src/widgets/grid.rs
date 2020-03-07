@@ -30,7 +30,7 @@ impl Grid {
         }
     }
 
-    fn resolve(&mut self, piet_text: &mut PietText, date: &Date<Utc>, show_weekday: bool) {
+    fn resolve(&mut self, piet_text: &mut PietText, date: Date<Utc>, show_weekday: bool) {
         let font_name = "sans-serif";
         let font = piet_text
             .new_font_by_name(font_name, self.font_size)
@@ -102,7 +102,7 @@ impl Widget<AppState> for Grid {
                 let diff = (7 * col as i64) + offset;
                 let date = first_day + chrono::Duration::days(diff);
 
-                self.resolve(paint_ctx.text(), &date, col == 0);
+                self.resolve(paint_ctx.text(), date, col == 0);
 
                 if let Some(label) = &self.label {
                     let origin = Point::from((
