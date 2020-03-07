@@ -1,3 +1,4 @@
+use chrono::{Datelike, Weekday};
 use druid::kurbo::Size;
 use druid::piet::{
     FontBuilder, PietText, PietTextLayout, RenderContext, Text, TextLayout, TextLayoutBuilder,
@@ -6,7 +7,8 @@ use druid::{
     BoxConstraints, Color, Env, Event, EventCtx, LayoutCtx, LifeCycle, LifeCycleCtx, PaintCtx,
     Point, Rect, UpdateCtx, Widget,
 };
-use std::collections::HashMap;
+
+use chrono::{Date, Utc};
 
 use crate::AppState;
 
@@ -28,27 +30,19 @@ impl Grid {
         }
     }
 
-    fn resolve(&mut self, piet_text: &mut PietText, row: u8, col: u8) {
+    fn resolve(&mut self, piet_text: &mut PietText, date: &Date<Utc>, show_weekday: bool) {
         let font_name = "sans-serif";
         let font = piet_text
             .new_font_by_name(font_name, self.font_size)
             .build()
             .unwrap();
 
-        let mut days = HashMap::new();
-        days.insert(1, "Lun");
-        days.insert(2, "Mar");
-        days.insert(3, "Mer");
-        days.insert(4, "Gio");
-        days.insert(5, "Ven");
-        days.insert(6, "Sab");
-        days.insert(7, "Dom");
-
-        let name = match col {
-            1 => format!("{} {}", days.get(&row).unwrap(), row),
-            x => format!("{}", (7 * (x - 1)) + row),
+        let label = if show_weekday {
+            format!("{} {}", date.weekday(), date.day())
+        } else {
+            date.day().to_string()
         };
-        self.label = Some(piet_text.new_text_layout(&font, &name).build().unwrap());
+        self.label = Some(piet_text.new_text_layout(&font, &label).build().unwrap());
     }
 }
 
@@ -77,21 +71,50 @@ impl Widget<AppState> for Grid {
         bc.constrain((SIZE * 7., SIZE * 6.))
     }
 
-    fn paint(&mut self, paint_ctx: &mut PaintCtx, _data: &AppState, _env: &Env) {
+    fn paint(&mut self, paint_ctx: &mut PaintCtx, data: &AppState, _env: &Env) {
+        // let date = data.selected_date.clone();
+        // let month = date.month0();
         let w0 = SIZE;
         let h0 = SIZE;
         for row in 0..7 {
             for col in 0..6 {
-                let origin = (w0 * row as f64 , h0 * col as f64);
+                let origin = (w0 * row as f64, h0 * col as f64);
                 let rect = Rect::from_origin_size(origin, (SIZE, SIZE));
                 paint_ctx.stroke(rect, &SECONDARY_COLOR, 1.);
-                self.resolve(paint_ctx.text(), row + 1, col + 1);
+
+                let first_day: chrono::Date<chrono::Utc> = data
+                    .selected_date
+                    .with_day(1)
+                    .expect("Couldn't get first day of the month");
+                let weekday = match row {
+                    0 => Weekday::Mon,
+                    1 => Weekday::Tue,
+                    2 => Weekday::Wed,
+                    3 => Weekday::Thu,
+                    4 => Weekday::Fri,
+                    5 => Weekday::Sat,
+                    6 => Weekday::Sun,
+                    // If we get here, I think the program can reasonably crash
+                    _ => unreachable!(),
+                };
+                let offset = weekday.number_from_monday() as i64
+                    - first_day.weekday().number_from_monday() as i64;
+                let diff = (7 * col as i64) + offset;
+                let date = first_day + chrono::Duration::days(diff);
+
+                self.resolve(paint_ctx.text(), &date, col == 0);
+
                 if let Some(label) = &self.label {
                     let origin = Point::from((
                         origin.0 + SIZE - label.width() - PADDING,
                         origin.1 + SIZE / 5.,
                     ));
-                    paint_ctx.draw_text(&label, origin, &MAIN_COLOR);
+                    let color = if date.month() == data.selected_date.month() {
+                        MAIN_COLOR
+                    } else {
+                        SECONDARY_COLOR
+                    };
+                    paint_ctx.draw_text(&label, origin, &color);
                 }
             }
         }
