@@ -5,11 +5,19 @@ matrix:
   include:
   - os: linux
     rust: stable
-
 script:
-  - cargo build --release --all
+- cargo build --release --all
 addons:
   apt:
     packages:
     - libgtk-3-dev
     - libmount-dev
+deploy:
+  provider: releases
+  api_key:
+    secure: Tcf+eLmb4UUCPnbOlGmucaPYesZcjuJqYt2TrQO60iM6/OvHdVenOUcD3mMQ3cXyogNUH7/aizUYSP5xvUDP3DM7qfoIreeTIUXlxj45PJzENwKnsjPY5zjzBr2NbhL8gpAep45AW3dFl0TryDHIUnw+QlX4+u8FC+1UI653WLQ9KnHvg8PGEPBMm6iIkwFTi8tGNH9+C5H8aiEtT2qq2EpjO8UKFGakN6bhP0MIyCfrt4ybH6aNqxR939oms4/vdTuLU/6OfVvdnN/twcP6t6+j/E/nWfhf+ZGunj6XsxMiKNNSn/R1mzetzkvr24UyFqUfxPj02T7tcQaNWfAkEybUDXDgdUWpF+y2VCX2LAo3v1IXSIBxNqpTtXjjDyZHCByiwqr5qzczIENhrzwosknwgVm3a9mgoulxyPmz5Tp/pvmO7YSJaQPzZTTzCnapUeXwZA0r7cD8xsBPYaIOJ66BiF8M4extceqg/ecghwayk8zhCnXNTwayiC7o8mg7oUDZDTL2+P9imQUxe81QTIo/Xubbzm2LrlsZ7h5I0+T1ovIGPuh/XOizZPw9sjHLV/YmQ6RFZTebRCCo5bq+B/zO93FDp1BohAj/Of0Vj0GFR2mV8Jg1pMq8R/3V7ymOoGa6auIxjLLsTgehv+zMZ/aDW7O+BE4y8Waz2DItEas=
+  file: ./target/release/calendars
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: Psykopear/calendars
