@@ -1,0 +1,15 @@
+dist: bionic
+language: rust
+cache: cargo
+matrix:
+  include:
+  - os: linux
+    rust: stable
+
+script:
+  - cargo build --release --all
+addons:
+  apt:
+    packages:
+    - libgtk-3-dev
+    - libmount-dev
