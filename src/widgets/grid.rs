@@ -82,7 +82,7 @@ impl Widget<AppState> for Grid {
                 let rect = Rect::from_origin_size(origin, (SIZE, SIZE));
                 paint_ctx.stroke(rect, &SECONDARY_COLOR, 1.);
 
-                let first_day: chrono::Date<chrono::Utc> = data
+                let first_day: Date<Utc> = data
                     .selected_date
                     .with_day(1)
                     .expect("Couldn't get first day of the month");
@@ -101,6 +101,14 @@ impl Widget<AppState> for Grid {
                     - first_day.weekday().number_from_monday() as i64;
                 let diff = (7 * col as i64) + offset;
                 let date = first_day + chrono::Duration::days(diff);
+
+                // Paint lighter background if selected day
+                if date == *data.selected_date {
+                    paint_ctx.fill(
+                        Rect::from_origin_size(origin, Size::new(w0, h0)),
+                        &Color::rgba8(0xff, 0xff, 0xff, 0x09),
+                    );
+                }
 
                 self.resolve(paint_ctx.text(), date, col == 0);
 
