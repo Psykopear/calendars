@@ -1,7 +1,9 @@
 mod widgets;
 
 use druid::widget::{Button, Flex, WidgetExt};
-use druid::{theme,Color, LocalizedString, AppLauncher, Data, Env, EventCtx, Lens, Widget, WindowDesc};
+use druid::{
+    theme, AppLauncher, Color, Data, Env, EventCtx, Lens, LocalizedString, Widget, WindowDesc,
+};
 use std::sync::Arc;
 
 use chrono::{Date, Datelike, Duration, NaiveDate, Utc};
@@ -22,7 +24,10 @@ fn month_days(date: Date<Utc>) -> i64 {
 }
 
 fn prev_month_days(date: Date<Utc>) -> i64 {
-    date.with_day(1).expect("This should never fail").pred().day() as i64
+    date.with_day(1)
+        .expect("This should never fail")
+        .pred()
+        .day() as i64
 }
 
 fn ui_builder() -> impl Widget<AppState> {
@@ -81,7 +86,10 @@ fn main() {
     AppLauncher::with_window(main_window)
         .use_simple_logger()
         .configure_env(|env, _| {
-            env.set(theme::WINDOW_BACKGROUND_COLOR, Color::rgb8(0x29, 0x29, 0x29));
+            env.set(
+                theme::WINDOW_BACKGROUND_COLOR,
+                Color::rgb8(0x29, 0x29, 0x29),
+            );
             env.set(theme::BUTTON_DARK, Color::rgb8(0x29, 0x29, 0x29));
             env.set(theme::BUTTON_LIGHT, Color::rgb8(0x29, 0x29, 0x29));
             env.set(theme::BUTTON_BORDER_RADIUS, 0.);

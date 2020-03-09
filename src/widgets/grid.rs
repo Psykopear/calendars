@@ -72,8 +72,6 @@ impl Widget<AppState> for Grid {
     }
 
     fn paint(&mut self, paint_ctx: &mut PaintCtx, data: &AppState, _env: &Env) {
-        // let date = data.selected_date.clone();
-        // let month = date.month0();
         let w0 = SIZE;
         let h0 = SIZE;
         for row in 0..7 {
